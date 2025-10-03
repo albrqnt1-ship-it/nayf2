@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشاهدة الحلقة - شبكة البرق</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
@@ -13,7 +13,7 @@
                 <h1 id="episode-title">مشاهدة الحلقة</h1>
             </div>
             <div class="header-actions">
-                <a href="/series.html" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
+                <a href="series.html" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
                     ← العودة للحلقات
                 </a>
             </div>
@@ -35,7 +35,7 @@
         </div>
     </div>
     
-    <script src="/js/main.js"></script>
+    <script src="js/main.js"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const episodeId = urlParams.get('episode');
@@ -44,7 +44,7 @@
             if (!episodeId) {
                 showAlert('معرف الحلقة غير موجود', 'error');
                 setTimeout(() => {
-                    window.location.href = '/series.html';
+                    window.location.href = 'series.html';
                 }, 2000);
                 return;
             }
@@ -54,7 +54,7 @@
             if (!result.success) {
                 showAlert(result.message, 'error');
                 setTimeout(() => {
-                    window.location.href = '/index.html';
+                    window.location.href = 'index.html';
                 }, 2000);
                 return;
             }
@@ -64,7 +64,7 @@
             if (!episode) {
                 showAlert('الحلقة غير موجودة', 'error');
                 setTimeout(() => {
-                    window.location.href = '/series.html';
+                    window.location.href = 'series.html';
                 }, 2000);
                 return;
             }
@@ -74,12 +74,12 @@
             const videoContainer = document.getElementById('video-container');
             videoContainer.innerHTML = `
                 <video controls autoplay>
-                    <source src="/uploads/episodes/${episode.video_file}" type="video/mp4">
+                    <source src="uploads/episodes/${episode.video_file}" type="video/mp4">
                     المتصفح لا يدعم تشغيل الفيديو
                 </video>
             `;
             
-            document.getElementById('download-link').href = `/uploads/episodes/${episode.video_file}`;
+            document.getElementById('download-link').href = `uploads/episodes/${episode.video_file}`;
             document.getElementById('download-link').download = episode.title;
         }
         

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - شبكة البرق</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="container">
@@ -14,10 +14,10 @@
                 <p>إدارة البطاقات والحلقات</p>
             </div>
             <div class="header-actions">
-                <a href="/admin/create-card.php" class="btn btn-success" style="width: auto; padding: 10px 20px;">
+                <a href="create-card.php" class="btn btn-success" style="width: auto; padding: 10px 20px;">
                     ➕ إنشاء بطاقة جديدة
                 </a>
-                <a href="/admin/schedule-manager.html" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
+                <a href="schedule-manager.html" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
                     📅 إدارة الجدول
                 </a>
                 <button onclick="logout()" class="btn btn-danger" style="width: auto; padding: 10px 20px;">
@@ -56,7 +56,7 @@
         </div>
     </div>
     
-    <script src="/js/main.js"></script>
+    <script src="../js/main.js"></script>
     <script>
         let cards = [];
         
@@ -67,7 +67,7 @@
                 showAlert(result.message, 'error');
                 if (result.message.includes('غير مصرح')) {
                     setTimeout(() => {
-                        window.location.href = '/admin/login.html';
+                        window.location.href = 'login.html';
                     }, 2000);
                 }
                 return;
@@ -163,7 +163,7 @@
         function logout() {
             if (confirm('هل تريد تسجيل الخروج؟')) {
                 apiRequest('logout.php').then(() => {
-                    window.location.href = '/admin/login.html';
+                    window.location.href = 'login.html';
                 });
             }
         }

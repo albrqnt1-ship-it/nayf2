@@ -1,4 +1,4 @@
-const API_URL = '/api';
+const API_URL = window.location.protocol === 'file:' ? 'api' : '/api';
 
 function showAlert(message, type = 'info') {
     const alertDiv = document.createElement('div');
@@ -67,7 +67,7 @@ function startCardStatusMonitoring() {
         if (!result.success && result.data && result.data.logout) {
             showAlert(result.message, 'error');
             setTimeout(() => {
-                window.location.href = '/index.html';
+                window.location.href = 'index.html';
             }, 2000);
         }
     }, 10000);

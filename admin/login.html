@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل دخول الإدارة - شبكة البرق</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="login-container">
@@ -32,7 +32,7 @@
         </div>
     </div>
     
-    <script src="/js/main.js"></script>
+    <script src="../js/main.js"></script>
     <script>
         document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -58,7 +58,7 @@
             if (result.success) {
                 showAlert(result.message, 'success');
                 setTimeout(() => {
-                    window.location.href = '/admin/index.html';
+                    window.location.href = 'index.html';
                 }, 1000);
             } else {
                 showAlert(result.message, 'error');

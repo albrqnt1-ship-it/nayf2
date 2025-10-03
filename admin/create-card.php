@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إنشاء بطاقة جديدة - شبكة البرق</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="container">
@@ -14,7 +14,7 @@
                 <p>إضافة بطاقة مع رفع الحلقات والملصقات</p>
             </div>
             <div class="header-actions">
-                <a href="/admin/index.html" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
+                <a href="index.html" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
                     ← العودة للوحة التحكم
                 </a>
             </div>
@@ -74,7 +74,7 @@
         </div>
     </div>
     
-    <script src="/js/main.js"></script>
+    <script src="../js/main.js"></script>
     <script>
         let createdCardNumber = '';
         let maxEpisodes = 0;
@@ -212,7 +212,7 @@
                 }
                 
                 setTimeout(() => {
-                    window.location.href = '/admin/index.html';
+                    window.location.href = 'index.html';
                 }, 3000);
             } else {
                 showAlert(result.message, 'error');
