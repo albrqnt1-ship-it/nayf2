@@ -1,0 +1,6 @@
+uploads/episodes/*
+uploads/posters/*
+uploads/thumbnails/*
+data/*.json.tmp
+.DS_Store
+Thumbs.db
