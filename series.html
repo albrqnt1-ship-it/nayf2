@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الحلقات - شبكة البرق</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🎬 مكتبة الحلقات</h1>
+                <p id="card-info">جاري التحميل...</p>
+            </div>
+            <div class="header-actions">
+                <a href="/schedule.html" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
+                    📅 جدول المواعيد
+                </a>
+                <button onclick="logout()" class="btn btn-danger" style="width: auto; padding: 10px 20px;">
+                    تسجيل الخروج
+                </button>
+            </div>
+        </div>
+        
+        <div id="episodes-container" class="episodes-grid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>جاري تحميل الحلقات...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/main.js"></script>
+    <script>
+        let episodes = [];
+        
+        async function loadEpisodes() {
+            const result = await apiRequest('get-episodes.php');
+            
+            if (!result.success) {
+                showAlert(result.message, 'error');
+                setTimeout(() => {
+                    window.location.href = '/index.html';
+                }, 2000);
+                return;
+            }
+            
+            episodes = result.data.episodes;
+            const cardInfo = result.data.card_info;
+            
+            document.getElementById('card-info').textContent = 
+                `بطاقة رقم: ${cardInfo.card_number} | عدد الحلقات: ${cardInfo.total_episodes}`;
+            
+            displayEpisodes();
+        }
+        
+        function displayEpisodes() {
+            const container = document.getElementById('episodes-container');
+            
+            if (episodes.length === 0) {
+                container.innerHTML = '<div class="glass-card"><p style="text-align: center; font-size: 1.2rem;">لا توجد حلقات متاحة حالياً</p></div>';
+                return;
+            }
+            
+            container.innerHTML = episodes.map((episode, index) => `
+                <div class="episode-card">
+                    ${episode.poster_file ? 
+                        `<img src="/uploads/posters/${episode.poster_file}" alt="${episode.title}" class="episode-poster">` :
+                        `<div class="episode-poster" style="display: flex; align-items: center; justify-content: center; font-size: 3rem;">🎬</div>`
+                    }
+                    <div class="episode-info">
+                        <div class="episode-title">الحلقة ${index + 1}: ${episode.title}</div>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.8); margin-top: 5px;">
+                            تم الرفع: ${formatDate(episode.uploaded_at)}
+                        </p>
+                        <div class="episode-actions">
+                            <a href="/watch.html?episode=${episode.id}" class="btn btn-primary">
+                                ▶️ مشاهدة
+                            </a>
+                            <a href="/uploads/episodes/${episode.video_file}" download class="btn btn-success">
+                                ⬇️ تحميل
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                apiRequest('logout.php').then(() => {
+                    window.location.href = '/index.html';
+                });
+            }
+        }
+        
+        startCardStatusMonitoring();
+        loadEpisodes();
+    </script>
+</body>
+</html>

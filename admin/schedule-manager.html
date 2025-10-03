@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة جدول المواعيد - شبكة البرق</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📅 إدارة جدول المواعيد</h1>
+                <p>تنظيم الجدول الأسبوعي لعرض الحلقات</p>
+            </div>
+            <div class="header-actions">
+                <a href="/admin/index.html" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
+                    ← العودة للوحة التحكم
+                </a>
+            </div>
+        </div>
+        
+        <div class="glass-card">
+            <form id="scheduleForm">
+                <div id="schedule-days">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>جاري تحميل الجدول...</p>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
+                    💾 حفظ الجدول
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="/js/main.js"></script>
+    <script>
+        let schedule = [];
+        
+        async function loadSchedule() {
+            const result = await apiRequest('schedule-api.php');
+            
+            if (!result.success) {
+                showAlert('حدث خطأ في تحميل الجدول', 'error');
+                return;
+            }
+            
+            schedule = result.data.schedule;
+            displaySchedule();
+        }
+        
+        function displaySchedule() {
+            const container = document.getElementById('schedule-days');
+            
+            container.innerHTML = schedule.map((day, dayIndex) => `
+                <div class="glass-card" style="margin-bottom: 20px; padding: 20px;">
+                    <h3>${day.day}</h3>
+                    
+                    <div id="episodes-${dayIndex}" style="margin: 15px 0;">
+                        ${(day.episodes || []).map((ep, epIndex) => `
+                            <div class="form-group" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end;">
+                                    <div>
+                                        <label>اسم المسلسل/الحلقة</label>
+                                        <input type="text" class="episode-name" data-day="${dayIndex}" data-ep="${epIndex}" 
+                                               value="${ep.name || ''}" placeholder="اسم المسلسل">
+                                    </div>
+                                    <div>
+                                        <label>الوقت</label>
+                                        <input type="text" class="episode-time" data-day="${dayIndex}" data-ep="${epIndex}" 
+                                               value="${ep.time || ''}" placeholder="مثال: 9:00 مساءً">
+                                    </div>
+                                    <div>
+                                        <label>عدد الحلقات</label>
+                                        <input type="text" class="episode-count" data-day="${dayIndex}" data-ep="${epIndex}" 
+                                               value="${ep.count || ''}" placeholder="العدد">
+                                    </div>
+                                    <button type="button" onclick="removeEpisode(${dayIndex}, ${epIndex})" 
+                                            class="btn btn-danger" style="padding: 10px 15px;">
+                                        ✖️
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <button type="button" onclick="addEpisode(${dayIndex})" class="btn btn-success" style="padding: 8px 15px; font-size: 0.9rem;">
+                        ➕ إضافة مسلسل/حلقة
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        function addEpisode(dayIndex) {
+            if (!schedule[dayIndex].episodes) {
+                schedule[dayIndex].episodes = [];
+            }
+            
+            schedule[dayIndex].episodes.push({
+                name: '',
+                time: '',
+                count: ''
+            });
+            
+            displaySchedule();
+        }
+        
+        function removeEpisode(dayIndex, epIndex) {
+            if (confirm('هل تريد حذف هذه الحلقة؟')) {
+                schedule[dayIndex].episodes.splice(epIndex, 1);
+                displaySchedule();
+            }
+        }
+        
+        document.getElementById('scheduleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            document.querySelectorAll('.episode-name').forEach(input => {
+                const dayIndex = parseInt(input.dataset.day);
+                const epIndex = parseInt(input.dataset.ep);
+                if (schedule[dayIndex].episodes[epIndex]) {
+                    schedule[dayIndex].episodes[epIndex].name = input.value;
+                }
+            });
+            
+            document.querySelectorAll('.episode-time').forEach(input => {
+                const dayIndex = parseInt(input.dataset.day);
+                const epIndex = parseInt(input.dataset.ep);
+                if (schedule[dayIndex].episodes[epIndex]) {
+                    schedule[dayIndex].episodes[epIndex].time = input.value;
+                }
+            });
+            
+            document.querySelectorAll('.episode-count').forEach(input => {
+                const dayIndex = parseInt(input.dataset.day);
+                const epIndex = parseInt(input.dataset.ep);
+                if (schedule[dayIndex].episodes[epIndex]) {
+                    schedule[dayIndex].episodes[epIndex].count = input.value;
+                }
+            });
+            
+            showLoading(true);
+            
+            const result = await fetch(`${API_URL}/schedule-api.php`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ schedule: schedule })
+            }).then(r => r.json());
+            
+            showLoading(false);
+            
+            if (result.success) {
+                showAlert(result.message, 'success');
+            } else {
+                showAlert(result.message, 'error');
+            }
+        });
+        
+        loadSchedule();
+    </script>
+</body>
+</html>

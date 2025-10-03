@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جدول مواعيد الحلقات - شبكة البرق</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📅 جدول مواعيد الحلقات</h1>
+                <p>الجدول الأسبوعي لعرض الحلقات</p>
+            </div>
+            <div class="header-actions">
+                <a href="/index.html" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
+                    ← الصفحة الرئيسية
+                </a>
+            </div>
+        </div>
+        
+        <div class="glass-card">
+            <div id="schedule-container" class="schedule-table">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>جاري تحميل الجدول...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/main.js"></script>
+    <script>
+        async function loadSchedule() {
+            const result = await apiRequest('schedule-api.php');
+            
+            if (!result.success) {
+                showAlert('حدث خطأ في تحميل الجدول', 'error');
+                return;
+            }
+            
+            const schedule = result.data.schedule;
+            const container = document.getElementById('schedule-container');
+            
+            container.innerHTML = schedule.map(day => `
+                <div class="day-row">
+                    <div class="day-name">${day.day}</div>
+                    ${day.episodes && day.episodes.length > 0 ? `
+                        <div style="margin-top: 10px;">
+                            ${day.episodes.map(ep => `
+                                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 8px;">
+                                    <strong>📺 ${ep.name}</strong>
+                                    ${ep.time ? `<span style="float: left; color: #38ef7d;">🕐 ${ep.time}</span>` : ''}
+                                    ${ep.count ? `<div style="margin-top: 5px; font-size: 0.9rem; color: rgba(255,255,255,0.8);">عدد الحلقات: ${ep.count}</div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : `
+                        <p style="color: rgba(255,255,255,0.6); margin-top: 10px;">لا توجد حلقات مجدولة</p>
+                    `}
+                </div>
+            `).join('');
+        }
+        
+        loadSchedule();
+    </script>
+</body>
+</html>

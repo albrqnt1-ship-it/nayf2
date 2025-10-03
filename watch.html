@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشاهدة الحلقة - شبكة البرق</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1 id="episode-title">مشاهدة الحلقة</h1>
+            </div>
+            <div class="header-actions">
+                <a href="/series.html" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
+                    ← العودة للحلقات
+                </a>
+            </div>
+        </div>
+        
+        <div class="glass-card">
+            <div class="video-player" id="video-container">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>جاري تحميل الحلقة...</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <a id="download-link" href="#" class="btn btn-success" style="width: auto; padding: 12px 30px; display: inline-block;">
+                    ⬇️ تحميل الحلقة
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/main.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const episodeId = urlParams.get('episode');
+        
+        async function loadEpisode() {
+            if (!episodeId) {
+                showAlert('معرف الحلقة غير موجود', 'error');
+                setTimeout(() => {
+                    window.location.href = '/series.html';
+                }, 2000);
+                return;
+            }
+            
+            const result = await apiRequest('get-episodes.php');
+            
+            if (!result.success) {
+                showAlert(result.message, 'error');
+                setTimeout(() => {
+                    window.location.href = '/index.html';
+                }, 2000);
+                return;
+            }
+            
+            const episode = result.data.episodes.find(ep => ep.id === episodeId);
+            
+            if (!episode) {
+                showAlert('الحلقة غير موجودة', 'error');
+                setTimeout(() => {
+                    window.location.href = '/series.html';
+                }, 2000);
+                return;
+            }
+            
+            document.getElementById('episode-title').textContent = `مشاهدة: ${episode.title}`;
+            
+            const videoContainer = document.getElementById('video-container');
+            videoContainer.innerHTML = `
+                <video controls autoplay>
+                    <source src="/uploads/episodes/${episode.video_file}" type="video/mp4">
+                    المتصفح لا يدعم تشغيل الفيديو
+                </video>
+            `;
+            
+            document.getElementById('download-link').href = `/uploads/episodes/${episode.video_file}`;
+            document.getElementById('download-link').download = episode.title;
+        }
+        
+        startCardStatusMonitoring();
+        loadEpisode();
+    </script>
+</body>
+</html>

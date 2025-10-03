@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - شبكة البرق</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo">
+                <h1>🎬 شبكة البرق</h1>
+                <p>نظام إدارة بطاقات المشاهدة</p>
+            </div>
+            
+            <div id="alert-container"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="card_number">رقم البطاقة</label>
+                    <input type="text" id="card_number" name="card_number" placeholder="أدخل رقم البطاقة" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">دخول</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/schedule.html" style="color: #fff; text-decoration: underline;">
+                    📅 عرض جدول مواعيد الحلقات
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/main.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const cardNumber = document.getElementById('card_number').value;
+            
+            if (!cardNumber.trim()) {
+                showAlert('الرجاء إدخال رقم البطاقة', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            
+            const formData = new FormData();
+            formData.append('card_number', cardNumber);
+            
+            const result = await apiRequest('verify-card.php', 'POST', formData);
+            
+            showLoading(false);
+            
+            if (result.success) {
+                showAlert(result.message, 'success');
+                
+                let countdown = 3;
+                const countdownDiv = document.createElement('div');
+                countdownDiv.className = 'countdown';
+                countdownDiv.textContent = countdown;
+                document.querySelector('.login-box').appendChild(countdownDiv);
+                
+                const timer = setInterval(() => {
+                    countdown--;
+                    if (countdown > 0) {
+                        countdownDiv.textContent = countdown;
+                    } else {
+                        clearInterval(timer);
+                        window.location.href = '/series.html';
+                    }
+                }, 1000);
+            } else {
+                showAlert(result.message, 'error');
+            }
+        });
+        
+        if (window.location.pathname === '/' || window.location.pathname === '') {
+            window.location.href = '/index.html';
+        }
+    </script>
+</body>
+</html>

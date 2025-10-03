@@ -1,0 +1,11 @@
+{
+  "schedule": [
+    {"day": "السبت", "episodes": [], "time": ""},
+    {"day": "الأحد", "episodes": [], "time": ""},
+    {"day": "الإثنين", "episodes": [], "time": ""},
+    {"day": "الثلاثاء", "episodes": [], "time": ""},
+    {"day": "الأربعاء", "episodes": [], "time": ""},
+    {"day": "الخميس", "episodes": [], "time": ""},
+    {"day": "الجمعة", "episodes": [], "time": ""}
+  ]
+}
