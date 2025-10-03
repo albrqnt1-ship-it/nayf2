@@ -39,9 +39,15 @@ $errors = [];
 $videosCount = isset($_FILES['videos']) ? count($_FILES['videos']['name']) : 0;
 $postersCount = isset($_FILES['posters']) ? count($_FILES['posters']['name']) : 0;
 
-if ($videosCount > $cardFound['max_episodes']) {
-    sendResponse(false, 'عدد الحلقات يتجاوز الحد المسموح به (' . $cardFound['max_episodes'] . ')');
+$currentEpisodesCount = count($cardFound['episodes']);
+$totalAfterUpload = $currentEpisodesCount + $videosCount;
+
+if ($totalAfterUpload > $cardFound['max_episodes']) {
+    sendResponse(false, 'عدد الحلقات الإجمالي سيتجاوز الحد المسموح به (' . $cardFound['max_episodes'] . '). الحلقات الحالية: ' . $currentEpisodesCount . '، تحاول رفع: ' . $videosCount);
 }
+
+define('MAX_VIDEO_SIZE', 400 * 1024 * 1024);
+define('MAX_POSTER_SIZE', 10 * 1024 * 1024);
 
 for ($i = 0; $i < $videosCount; $i++) {
     if ($_FILES['videos']['error'][$i] !== UPLOAD_ERR_OK) {
@@ -50,7 +56,13 @@ for ($i = 0; $i < $videosCount; $i++) {
     
     $videoName = $_FILES['videos']['name'][$i];
     $videoTmpName = $_FILES['videos']['tmp_name'][$i];
+    $videoSize = $_FILES['videos']['size'][$i];
     $videoExt = strtolower(pathinfo($videoName, PATHINFO_EXTENSION));
+    
+    if ($videoSize > MAX_VIDEO_SIZE) {
+        $errors[] = "حجم الفيديو كبير جداً: $videoName (الحد الأقصى: 400 ميجابايت)";
+        continue;
+    }
     
     $allowedVideoExts = ['mp4', 'mkv', 'avi', 'mov', 'webm'];
     if (!in_array($videoExt, $allowedVideoExts)) {
@@ -70,7 +82,13 @@ for ($i = 0; $i < $videosCount; $i++) {
     if (isset($_FILES['posters']['name'][$i]) && $_FILES['posters']['error'][$i] === UPLOAD_ERR_OK) {
         $posterName = $_FILES['posters']['name'][$i];
         $posterTmpName = $_FILES['posters']['tmp_name'][$i];
+        $posterSize = $_FILES['posters']['size'][$i];
         $posterExt = strtolower(pathinfo($posterName, PATHINFO_EXTENSION));
+        
+        if ($posterSize > MAX_POSTER_SIZE) {
+            $errors[] = "حجم الملصق كبير جداً: $posterName (الحد الأقصى: 10 ميجابايت)";
+            continue;
+        }
         
         $allowedImageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         if (in_array($posterExt, $allowedImageExts)) {
