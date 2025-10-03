@@ -1,0 +1,277 @@
+# Viewing Cards Management System - Al-Barq Net Rest (Updated)
+
+## 🎯 Overview
+A comprehensive system for managing viewing access cards, with unique feature of directly linking episodes and posters to each card upon creation.
+
+## 📱 Required Functions
+
+### 1. User Login System
+- Login page with card number verification
+- ✅ **Card number can be any length** (not necessarily 12 digits)
+- Each card has its own dedicated episodes
+- Check card status (active/suspended)
+- **Automatic logout if card is suspended during viewing**
+- Display only episodes specific to the card with posters
+- Automatic countdown before redirect after verification
+- Download button for each episode next to watch button
+- **Automatic redirect to login page when accessing main device IP**
+- **Episode release schedule page accessible to all without needing a card**
+- **No connection errors during login - stable and reliable system**
+
+### 2. 🆕 Card Creation System with Episodes & Posters Upload (Admin)
+- Create new card with specifications:
+  * Card number (✅ **Any length** - 5, 10, 15, etc.)
+  * Required number of episodes
+  * Allowed number of devices
+  * **Device limit control: allows only the specified number of devices**
+
+- 🎬 **Dedicated Episodes & Posters Upload Feature:**
+  * When creating card, admin sees:
+    - Field for required number of episodes
+    - "Upload Dedicated Episodes & Posters" button
+  * When clicking button, file upload window appears:
+    - Can upload multiple video files
+    - Can upload episode posters (one image per episode)
+    - Number of files cannot exceed specified episode count
+    - File preview before upload
+    - **Multi-auto-upload feature:** Can upload all episodes and posters in one go without page refresh
+    - Confirm linking between card, episodes, and posters
+
+### 3. Admin Control Panel
+- **Completely separate login system from user page - not visible on regular user page**
+- Secure admin login via separate link
+- View and manage current cards with:
+  * Card number
+  * Number of uploaded/allowed episodes
+  * Status (active/suspended)
+  * Number of connected/allowed devices
+- Usage statistics
+- Ability to modify uploaded episodes and posters for any card
+- **Card delete button** with confirmation
+- **Episode release schedule page** (admin manageable)
+
+### 4. Content System
+- Upload and display series
+- Link episodes and posters with dedicated cards
+- Watch page with download capability
+- Episode download capability
+
+### 5. 🆕 Episode Release Schedule Page
+- **Separate page accessible to users directly without login**
+- Fixed weekly schedule (Saturday to Friday)
+- Management capabilities for:
+  * Episode name
+  * Release time
+  * Number of episodes
+  * Any other modifications
+- Easy management and editing interface
+- User display for release schedule information **without needing to enter a card**
+
+## 🛠️ Technical Requirements
+
+### Frontend:
+- HTML5, CSS3, JavaScript (ES6+)
+- Responsive Arabic design (RTL)
+- Modern UI with drag & drop file upload
+- File preview before upload
+- AJAX for multi-auto-upload
+- WebSocket for automatic card status checking
+- **Error handling and connection stability**
+
+### Backend:
+- PHP 7.4+
+- JSON as database (files)
+- Secure session system
+- Support for large video and image file uploads
+- Connected device tracking system
+- **Stable API connections with proper error handling**
+
+### Structure:
+```
+project/
+├── index.html              # User login (automatic on main IP)
+├── series.html             # Series display
+├── watch.html              # Episode viewing
+├── schedule.html           # Episode release schedule (for all without login)
+├── admin/
+│   ├── index.html          # Main control panel
+│   ├── login.html          # Admin login (completely separate)
+│   ├── create-card.php     # Create card with episode upload
+│   ├── schedule-manager.html # Release schedule management
+│   └── ...
+├── api/
+│   ├── config.php          # Settings
+│   ├── verify-card.php     # Card verification
+│   ├── create-card.php     # Create card
+│   ├── upload-episodes.php # Upload episodes & posters
+│   ├── delete-card.php     # Delete card
+│   ├── check-card-status.php # Check card status
+│   ├── device-tracker.php  # Device tracking
+│   ├── schedule-api.php    # Release schedule management
+│   └── ...
+├── uploads/                # Uploaded files
+│   ├── episodes/           # Episodes
+│   ├── posters/            # Episode posters
+│   └── thumbnails/         # Thumbnails
+├── data/
+│   ├── cards.json          # Cards database
+│   ├── series_data.json    # Series database
+│   ├── devices.json        # Connected devices record
+│   └── schedule.json       # Episode release schedule
+├── css/
+└── js/
+```
+
+## 🎬 Episodes & Posters Upload Flow:
+1. Admin creates new card
+2. Specifies required episodes and allowed devices count
+3. Clicks "Upload Dedicated Episodes & Posters"
+4. File upload window appears
+5. Uploads video and image files (up to specified limit)
+6. **Can upload all files in one go without page refresh**
+7. System automatically links uploaded files with card
+8. Success confirmation and details display
+
+## 🔒 Security Requirements
+- Permission verification
+- Input sanitization
+- Activity logging
+- Prevent direct file access
+- File format verification (videos and images)
+- **Device tracking system and allowed count control**
+- **Automatic logout when card is suspended**
+- **Complete hiding of admin panel from regular users**
+- **Stable connection handling - no login connection errors**
+
+## 🎨 Design Requirements
+- Arabic interface (RTL)
+- Colors: Blue, purple, dark gradients
+- Modern design with glass effects
+- Responsive for all screens
+- Drag and drop interface for file upload
+- Clear download and delete buttons
+- **Completely separate interface for administration - not visible to regular users**
+- **User-friendly error messages and loading indicators**
+
+## 🆕 Added Features:
+
+### 1. Posters System
+- Each episode has its own poster (image)
+- Display poster alongside episode information
+- Upload posters with episodes in same window
+
+### 2. Download Button
+- Download button for each episode next to watch button
+- Direct episode download capability
+
+### 3. Card Delete Button
+- Ability to delete card from control panel
+- Confirmation before deletion
+- Delete all card-related files
+
+### 4. Multi-Auto-Upload
+- Can upload all episodes and posters in one batch
+- No need to refresh page after each upload
+- Visual upload progress
+- Instant success notifications
+
+### 5. 🆕 Connection Stability Features:
+
+#### A. Stable Login System
+- **No connection errors during login process**
+- **Robust error handling and fallback mechanisms**
+- **Automatic retry with exponential backoff**
+- **Clear error messages for users**
+
+#### B. Reliable API Communication
+- **Stable JSON database operations**
+- **Proper file permission handling**
+- **Database backup and recovery systems**
+- **Connection timeout management**
+
+#### C. Automatic Logout When Card Suspended
+- Continuous card status monitoring
+- Immediate user logout if card is suspended
+- Explanatory message for user
+
+#### D. Automatic Login Page Opening
+- Automatic detection of main device IP
+- Direct redirect to login page
+- Smooth user experience
+
+#### E. Completely Separate Admin Login System
+- **Completely separate admin login page - not visible in user interface**
+- **Different URL for administration known only to admin**
+- **No links or mentions of control panel on user page**
+- Enhanced security and complete permission separation
+
+#### F. Device Count Control
+- Connected device tracking system
+- Prevent exceeding allowed number of devices
+- User notification when limit exceeded
+
+#### G. Episode Release Schedule for All
+- **Separate page accessible to any user without registration**
+- **Direct link to release schedule from main page**
+- Fixed weekly schedule (Saturday - Friday)
+- Easy management interface for admin
+- Clear display for users **without needing to enter a card**
+
+## 🔧 Technical Stability Features:
+
+### Connection Handling:
+- **Stable AJAX requests with error handling**
+- **JSON database read/write stability**
+- **File upload reliability**
+- **Session management without errors**
+
+### Error Prevention:
+- **Input validation before submission**
+- **Database backup systems**
+- **File system permission checks**
+- **Memory usage optimization**
+
+### User Experience:
+- **Loading indicators during operations**
+- **Clear success/error messages**
+- **Automatic recovery from errors**
+- **No unexpected connection drops**
+
+## 🔄 Improved Workflows:
+
+### User Workflow:
+1. Visit device IP → automatic redirect to login page
+2. **Stable login process without connection errors**
+3. **Ability to visit schedule page directly without login**
+4. Enter card number → verify status and device
+5. Access content → continuous card status monitoring
+6. If card suspended → immediate automatic logout
+
+### Admin Workflow:
+1. **Login from completely separate admin link (e.g.: /admin/login.html)**
+2. **No access to control panel from regular user page**
+3. **Stable admin interface without connection issues**
+4. Create cards with device count specification
+5. Upload episodes and posters in batches
+6. Manage episode release schedule
+7. Monitor connected devices and control access
+
+### Release Schedule Workflow:
+1. Admin inputs weekly schedule data
+2. System displays schedule to users **without requiring login**
+3. **Direct link in main page to release schedule**
+4. Easy modification and updating capability
+5. Organized display of episode release times for everyone
+
+## 🚫 Complete Admin Panel Separation:
+- **No "Admin Login" link on user page**
+- **No indications of control panel existence in main interface**
+- **Admin panel link is secret and protected**
+- **Double permission verification for admin access**
+
+## ✅ Stability Guarantees:
+- **No connection errors during user login**
+- **Stable API endpoints with proper error handling**
+- **Reliable file upload system**
+- **Robust database operations**
+- **Smooth user experience without interruptions**
